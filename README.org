@@ -1,0 +1,42 @@
+#+TITLE: Bundle Dependency Notifier
+
+Small utility to track the dependencies of the [[https://build.opensuse.org/project/show/systemsmanagement:saltstack:bundle][Salt Bundle]].
+
+* Timestamp-based approach
+This tool notifies the Salt Bundle maintainers when a dependency was updated at
+its origin. It does that by checking the timestamp of the last modification of
+each origin. If a timestamp is newer than the last execution of this tool, the
+dependency is considered =updated= and a notification will be send.
+
+
+The notification can be send through different mechanisms.
+
+
+Example =json= document:
+#+begin_src json
+[
+  {
+    "name": "saltbundlepy",
+    "origin": {
+      "project": "SUSE:SLE-15-SP3:Update",
+      "package": "python39"
+    }
+  },
+  {
+    "name": "saltbundlepy-cffi",
+    "origin":
+    {
+      "project": "devel:languages:python",
+      "package": "python-cffi"
+    }
+  }
+]
+#+end_src
+
+* Alternative approach
+1. list of bundled packages api /source/<project-name>
+2. mapping bundled package -> origin (project/package) (project one of:
+   openSUSE:Factory or SUSE:SLE-15-SP4:Update)
+3. for all origins: save revision id
+4. for all origins: check if revision id changed, produce diff between old and
+   new revision

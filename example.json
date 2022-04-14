@@ -1,0 +1,17 @@
+[
+  {
+    "name": "saltbundlepy",
+    "original_source": {
+      "project": "SUSE:SLE-15-SP3:Update",
+      "package": "python39"
+    }
+  },
+  {
+    "name": "saltbundlepy-cffi",
+    "original_source":
+    {
+      "project": "SUSE:SLE-15-SP3:Update",
+      "package": "python-cffi"
+    }
+  }
+]

@@ -8,9 +8,9 @@ Timestamp = int
 
 
 @dataclass(frozen=True)
-class Origin:
+class Package:
     project: str
-    package: str
+    name: str
 
 
 @dataclass(frozen=True)
@@ -42,22 +42,22 @@ def list_packages(
     return _parse_packages_list(response_text)
 
 
-def origin_was_updated(
+def package_was_updated(
     last_check: Timestamp,
-    origin: Origin,
+    package: Package,
     credentials: Credentials,
     api_url: str = "https://api.opensuse.org",
 ) -> bool:
     """Check if an OBS package was changed since a known timestamp.
 
     :param last_check: Unix timestamp of the last check
-    :param origin: OBS package to check
+    :param package: OBS package to check
     :param credentials: OBS API credentials
     :param api_url: Base URL of the OBS API server, defaults to https://api.opensuse.org
     :return: True if the package was updated, False otherwise
     """
-    response_text = _query_origin(
-        origin=origin,
+    response_text = _query_package(
+        package=package,
         credentials=credentials,
         api_url=api_url,
     )
@@ -99,14 +99,14 @@ def _extract_package_timestamps(response_text) -> List[Timestamp]:
     return [Timestamp(package.attrib["mtime"]) for package in root.findall("./entry")]
 
 
-def _query_origin(
-    origin: Origin,
+def _query_package(
+    package: Package,
     credentials: Credentials,
     api_url: str,
 ) -> str:
     try:
-        url = f"{api_url}/source/{origin.project}/{origin.package}"
-        response = requests.get(url, auth=credentials)
+        url = f"{api_url}/source/{package.project}/{package.name}"
+        response = requests.get(url, auth=credentials.as_tuple())
         response.raise_for_status()
         return response.text
     except requests.RequestException:

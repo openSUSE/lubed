@@ -1,7 +1,7 @@
 import textwrap
 
 import pytest
-from bundle_dep_notifier import collect
+from bundle_dep_notifier import obs
 
 
 def test_parse_packages_response():
@@ -14,7 +14,7 @@ def test_parse_packages_response():
         """
     )
 
-    assert collect._parse_packages_list(example_response) == [
+    assert obs._parse_packages_list(example_response) == [
         "saltbundlepy",
         "saltbundlepy-cffi",
     ]
@@ -22,7 +22,7 @@ def test_parse_packages_response():
 
 @pytest.mark.parametrize(
     "last_check, expected", [(1000000000, True), (1700000000, False)])
-def test_origin_was_update(last_check, expected):
+def test_package_was_update(last_check, expected):
     """The helper functions are called directly to avoid mocking."""
     example_response = textwrap.dedent(
         """\
@@ -36,7 +36,7 @@ def test_origin_was_update(last_check, expected):
         </directory>
         """
     )
-    timestamps = collect._extract_package_timestamps(example_response)
+    timestamps = obs._extract_package_timestamps(example_response)
 
     assert timestamps == [
         1642780451,
@@ -46,4 +46,4 @@ def test_origin_was_update(last_check, expected):
         1643196556,
     ]
 
-    assert collect._any_timestamp_is_newer(timestamps, last_check) == expected
+    assert obs._any_timestamp_is_newer(timestamps, last_check) == expected

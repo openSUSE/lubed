@@ -1,0 +1,196 @@
+bundle_project = "systemsmanagement:saltstack:bundle"
+api_baseurl = "https://api.opensuse.org"
+
+[origins]
+[origins.saltbundlepy]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python310"
+[origins.saltbundle-libsodium]
+project = "SUSE:SLE-15-SP4:Update"
+package = "libsodium"
+[origins.saltbundle-swig]
+project = "SUSE:SLE-15-SP4:Update"
+package = "swig"
+[origins.saltbundle-zeromq]
+project = "SUSE:SLE-15-SP4:Update"
+package = "zeromq"
+[origins.saltbundlepy-appdirs]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-appdirs"
+[origins.saltbundlepy-asn1crypto]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-asn1crypto"
+[origins.saltbundlepy-atomicwrites]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-atomicwrites"
+[origins.saltbundlepy-attrs]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-attrs"
+[origins.saltbundlepy-bcrypt]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-bcrypt"
+[origins.saltbundlepy-certifi]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-certifi"
+[origins.saltbundlepy-cffi]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-cffi"
+[origins.saltbundlepy-chardet]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-chardet"
+[origins.saltbundlepy-cryptography]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-cryptography"
+[origins.saltbundlepy-cryptography-vectors]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-vectors"
+[origins.saltbundlepy-cssselect]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-cssselect"
+[origins.saltbundlepy-cython]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-cython"
+[origins.saltbundlepy-distro]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-distro"
+[origins.saltbundlepy-docker]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-docker"
+[origins.saltbundlepy-docker-pycreds]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-pycreds"
+[origins.saltbundlepy-docopt]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-docopt"
+[origins.saltbundlepy-idna]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-idna"
+[origins.saltbundlepy-importlib-metadata]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-metadata"
+[origins.saltbundlepy-jinja2]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-jinja2"
+[origins.saltbundlepy-kiwi]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-kiwi"
+[origins.saltbundlepy-lxml]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-lxml"
+[origins.saltbundlepy-m2crypto]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-m2crypto"
+[origins.saltbundlepy-markupsafe]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-markupsafe"
+[origins.saltbundlepy-more-itertools]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-itertools"
+[origins.saltbundlepy-msgpack]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-msgpack"
+[origins.saltbundlepy-netaddr]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-netaddr"
+[origins.saltbundlepy-packaging]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-packaging"
+[origins.saltbundlepy-paramiko]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-paramiko"
+[origins.saltbundlepy-pip]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-pip"
+[origins.saltbundlepy-pluggy]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-pluggy"
+[origins.saltbundlepy-psutil]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-psutil"
+[origins.saltbundlepy-ptyprocess]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-ptyprocess"
+[origins.saltbundlepy-py]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-py"
+[origins.saltbundlepy-pyasn1]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-pyasn1"
+[origins.saltbundlepy-pyasn1-modules]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-modules"
+[origins.saltbundlepy-pycparser]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-pycparser"
+[origins.saltbundlepy-pycurl]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-pycurl"
+[origins.saltbundlepy-pyinotify]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-pyinotify"
+[origins.saltbundlepy-pynacl]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-pynacl"
+[origins.saltbundlepy-pyopenssl]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-pyopenssl"
+[origins.saltbundlepy-pyparsing]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-pyparsing"
+[origins.saltbundlepy-pysocks]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-pysocks"
+[origins.saltbundlepy-pytest]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-pytest"
+[origins.saltbundlepy-pytz]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-pytz"
+[origins.saltbundlepy-pyxattr]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-pyxattr"
+[origins.saltbundlepy-pyyaml]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-pyyaml"
+[origins.saltbundlepy-pyzmq]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-pyzmq"
+[origins.saltbundlepy-requests]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-requests"
+[origins.saltbundlepy-rpm-macros]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-macros"
+[origins.saltbundlepy-rpm-vercmp]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-vercmp"
+[origins.saltbundlepy-setuptools]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-setuptools"
+[origins.saltbundlepy-setuptools-scm]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-scm"
+[origins.saltbundlepy-simplejson]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-simplejson"
+[origins.saltbundlepy-six]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-six"
+[origins.saltbundlepy-tornado]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-tornado"
+[origins.saltbundlepy-urllib3]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-urllib3"
+[origins.saltbundlepy-venvjail]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-venvjail"
+[origins.saltbundlepy-websocket-client]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-client"
+[origins.saltbundlepy-zipp]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-zipp"
+[origins.saltbundlepy-zypp-plugin]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-plugin"

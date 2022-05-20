@@ -10,29 +10,6 @@ dependency is considered =updated= and a notification will be send.
 
 
 The notification can be send through different mechanisms.
-
-
-Example =json= document:
-#+begin_src json
-[
-  {
-    "name": "saltbundlepy",
-    "origin": {
-      "project": "SUSE:SLE-15-SP3:Update",
-      "package": "python39"
-    }
-  },
-  {
-    "name": "saltbundlepy-cffi",
-    "origin":
-    {
-      "project": "devel:languages:python",
-      "package": "python-cffi"
-    }
-  }
-]
-#+end_src
-
 * Alternative approach
 1. list of bundled packages api /source/<project-name>
 2. mapping bundled package -> origin (project/package) (project one of:
@@ -40,3 +17,12 @@ Example =json= document:
 3. for all origins: save revision id
 4. for all origins: check if revision id changed, produce diff between old and
    new revision
+
+* Config File
+A config file is needed to define the /Salt Bundle project/ and the origin of
+each package. The format is TOML.
+
+#+begin_src toml
+bundle_project = "systemsmanagement:saltstack:bundle"
+api_baseurl = "https://api.opensuse.org"
+#+end_src

@@ -1,31 +1,16 @@
-from dataclasses import dataclass
+import functools
 import urllib.parse
 from typing import List
 from xml.etree import ElementTree
 
 import requests
 
-Timestamp = int
-
-
-@dataclass(frozen=True)
-class Package:
-    project: str
-    name: str
-
-
-@dataclass(frozen=True)
-class Credentials:
-    username: str
-    password: str
-
-    def as_tuple(self):
-        return (self.username, self.password)
+from bundle_dep_notifier import OBSCredentials, Package, Timestamp
 
 
 def list_packages(
     project_name: str,
-    credentials: Credentials,
+    credentials: OBSCredentials,
     api_url: str = "https://api.opensuse.org",
 ) -> List[str]:
     """List all OBS packages in an OBS project.
@@ -47,7 +32,7 @@ def list_packages(
 def package_was_updated(
     last_check: Timestamp,
     package: Package,
-    credentials: Credentials,
+    credentials: OBSCredentials,
     api_url: str = "https://api.opensuse.org",
 ) -> bool:
     """Check if an OBS package was changed since a known timestamp.
@@ -71,7 +56,7 @@ def package_was_updated(
 
 def list_subprojects(
     project_name: str,
-    credentials: Credentials,
+    credentials: OBSCredentials,
     api_url: str = "https://api.opensuse.org",
 ) -> List[str]:
     """List all OBS packages in an OBS project.
@@ -90,7 +75,20 @@ def list_subprojects(
     return _parse_subprojects_list(response_text)
 
 
-def _query_subprojects_list(project_name: str, credentials: Credentials, api_url: str):
+def package_in_project(
+    package_name: str, project_name: str, credentials: OBSCredentials, api_url: str
+) -> bool:
+    return bool(
+        _query_package(
+            Package(name=package_name, project=project_name), credentials, api_url
+        )
+    )
+
+
+@functools.lru_cache
+def _query_subprojects_list(
+    project_name: str, credentials: OBSCredentials, api_url: str
+):
     try:
         url = f"{api_url}/search/project/id?match=" + urllib.parse.quote(
             f'starts_with(@name, "{project_name}")'
@@ -106,8 +104,9 @@ def _any_timestamp_is_newer(timestamps: List[Timestamp], base: Timestamp):
     return any(ts > base for ts in timestamps)
 
 
+@functools.lru_cache
 def _query_packages_list(
-    project_name: str, credentials: Credentials, api_url: str
+    project_name: str, credentials: OBSCredentials, api_url: str
 ) -> str:
     try:
         url = f"{api_url}/source/{project_name}"
@@ -142,9 +141,10 @@ def _extract_package_timestamps(response_text) -> List[Timestamp]:
     return [Timestamp(package.attrib["mtime"]) for package in root.findall("./entry")]
 
 
+@functools.lru_cache
 def _query_package(
     package: Package,
-    credentials: Credentials,
+    credentials: OBSCredentials,
     api_url: str,
 ) -> str:
     try:

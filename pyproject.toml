@@ -6,12 +6,18 @@ authors = ["Alexander Graul <agraul@suse.com>"]
 license = "GPL-3.0-or-later"
 
 [tool.poetry.scripts]
+init ="bundle_dep_notifier.cli:init"
+list-missing-packages = "bundle_dep_notifier.cli:list_missing_packages"
+list-updated-packages = "bundle_dep_notifier.cli:list_updated_packages"
+list-subprojects-for-packages = "bundle_dep_notifier.cli:list_subprojects_for_packages"
 wiptest = "bundle_dep_notifier:real_test"
 
 [tool.poetry.dependencies]
 python = "^3.8"
 requests = "^2.26.0"
 tomli = "^2.0.1"
+click = "^8.1.3"
+rich = "^12.4.4"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"

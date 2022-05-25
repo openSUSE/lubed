@@ -1,7 +1,7 @@
 import textwrap
 
 import pytest
-from bundle_dep_notifier import obs
+from lubed import obs
 
 
 def test_parse_packages_response():

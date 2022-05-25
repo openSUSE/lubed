@@ -5,7 +5,7 @@ from xml.etree import ElementTree
 
 import requests
 
-from bundle_dep_notifier import OBSCredentials, Package, Timestamp
+from lubed import OBSCredentials, Package, Timestamp
 
 
 def list_packages(

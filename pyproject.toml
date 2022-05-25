@@ -1,16 +1,12 @@
 [tool.poetry]
-name = "bundle-dep-notifier"
+name = "lubed"
 version = "0.1.0"
 description = ""
 authors = ["Alexander Graul <agraul@suse.com>"]
 license = "GPL-3.0-or-later"
 
 [tool.poetry.scripts]
-init ="bundle_dep_notifier.cli:init"
-list-missing-packages = "bundle_dep_notifier.cli:list_missing_packages"
-list-updated-packages = "bundle_dep_notifier.cli:list_updated_packages"
-list-subprojects-for-packages = "bundle_dep_notifier.cli:list_subprojects_for_packages"
-wiptest = "bundle_dep_notifier:real_test"
+lubed ="lubed.cli:cli"
 
 [tool.poetry.dependencies]
 python = "^3.8"

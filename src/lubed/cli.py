@@ -4,7 +4,7 @@ import click
 import rich
 import rich.table
 
-from bundle_dep_notifier import Package, Timestamp, obs, read_config
+from lubed import Package, Timestamp, obs, read_config
 
 
 @click.group()

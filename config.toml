@@ -8,7 +8,7 @@ api_baseurl = "https://api.opensuse.org"
 repo = "SUSE/spacewalk"
 column_id = 18813228
 [github.issue]
-title = "Update Salt Bundle Depdencenies"
+title = "Update Salt Bundle Dependencies"
 body = """
 It's time to update all dependencies in the Salt Bundle.
 

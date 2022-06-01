@@ -2,14 +2,36 @@
 
 Small utility to track the dependencies of the [[https://build.opensuse.org/project/show/systemsmanagement:saltstack:bundle][Salt Bundle]].
 
-* Timestamp-based approach
-This tool notifies the Salt Bundle maintainers when a dependency was updated at
-its origin. It does that by checking the timestamp of the last modification of
-each origin. If a timestamp is newer than the last execution of this tool, the
-dependency is considered =updated= and a notification will be send.
 
+* Installation
+1. ~zypper install python3-poetry~
+2. ~git clone git@github.com:agraul/lubed~
+3. ~poetry install~
 
-The notification can be send through different mechanisms.
+* Configuration
+~lubed~ needs to know where to find the origin of the dependencies.
+
+=config.toml= must include an =origins= table of tables, e.g.
+#+begin_src toml
+[origins]
+[origins.saltbundlepy]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python310"
+#+end_src
+
+Keep in mind that the /name/ is the /OBS Package/ name, and that the OBS API resolves project
+inheritance.
+
+* Running ~lubed~
+- ~lubed init~ -> saves the current time in =.last_execution=
+- ~lubed updates~ -> list packages that have been updated in their origin since
+  the timestamp in =.last_execution=.
+- ~lubed subprojects-containing saltbundlepy~ -> list all subprojects that
+  contain =saltbundlepy=
+- ~lubed not-in-conf~ -> list packages in the bundle project that are not in the
+  =origins= table in =config.toml=.
+- ~lubed create-issue~ -> create a GitHub issue with the list of all packages
+  that need an update
 
 * Alternative approach
 1. list of bundled packages api /source/<project-name>
@@ -18,12 +40,3 @@ The notification can be send through different mechanisms.
 3. for all origins: save revision id
 4. for all origins: check if revision id changed, produce diff between old and
    new revision
-
-* Config File
-A config file is needed to define the /Salt Bundle project/ and the origin of
-each package. The format is TOML.
-
-#+begin_src toml
-bundle_project = "systemsmanagement:saltstack:bundle"
-api_baseurl = "https://api.opensuse.org"
-#+end_src

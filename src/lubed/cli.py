@@ -1,4 +1,7 @@
 import time
+import string
+import textwrap
+from datetime import datetime
 from collections import ChainMap
 
 import click
@@ -6,7 +9,7 @@ import rich.console
 import rich.table
 
 from lubed import Package, Timestamp, OBSCredentials
-from lubed import obs, config
+from lubed import obs, config, gh
 
 console = rich.console.Console()
 
@@ -188,36 +191,130 @@ def updates(
         last_timestamp = Timestamp(f.read())
     conf = ChainMap(config.load(config_path), config.DEFAULTS)
     api_url = conf["obs"]["api_baseurl"]
+    origins = conf["origins"]
     credentials = OBSCredentials(obs_username, obs_password)
+    now = Timestamp(time.time())
+
+    with console.status("Checking for updates...", spinner="arc"):
+        updates = _calculate_updated_packages(
+            last_timestamp, origins, credentials, api_url
+        )
 
     table = rich.table.Table(title="Packages Updated in Origin")
     table.add_column("Bundle Package Name")
     table.add_column("Origin Project Name")
     table.add_column("Origin Package Name")
+    for updated_package in updates:
+        table.add_row(*updated_package)
+    console.print(table)
 
-    packages = {
-        bundle_name: Package(project=p["project"], name=p["package"])
-        for bundle_name, p in conf["origins"].items()
-    }
+    _maybe_update_timestamp(no_update_timestamp, last_timestamp_file, now)
+
+
+@cli.command()
+@click.option(
+    "--last-timestamp-file",
+    type=click.Path(),
+    default=".last_execution",
+    help="File containing the last execution time in Unix time format.",
+)
+@click.option(
+    "--config-path",
+    type=click.Path(exists=True, dir_okay=False),
+    default="config.toml",
+    help="Config file location, TOML format",
+)
+@click.option(
+    "--obs-username",
+    envvar="OBSUSER",
+    help="OBS API username, can be passed via the environment variable OBSUSER as well.",
+)
+@click.option(
+    "--obs-password",
+    envvar="OBSPASSWD",
+    help="OBS API password, can be passed via the environment variable OBSPASSWD as well.",
+)
+@click.option(
+    "--gh-token",
+    envvar="GHTOKEN",
+    help="GitHub OAuth token, can be passed via the environment variable GHTOKEN",
+)
+def create_issue(
+    last_timestamp_file, config_path, obs_username, obs_password, gh_token
+):
+    """Create a GitHub issue which includes the list of needed updates."""
+    with open(last_timestamp_file, "r") as f:
+        last_timestamp = Timestamp(f.read())
+    conf = ChainMap(config.load(config_path), config.DEFAULTS)
+    api_url = conf["obs"]["api_baseurl"]
+    gh_repo = conf["github"]["repo"]
+    gh_column_id = conf["github"]["column_id"]
+    issue_title = conf["github"]["issue"]["title"]
+    issue_body_template = string.Template(conf["github"]["issue"]["body"])
+    issue_labels = conf["github"]["issue"]["labels"]
+    origins = conf["origins"]
+    credentials = OBSCredentials(obs_username, obs_password)
+    now = Timestamp(time.time())
+    now_human_readable = datetime.utcfromtimestamp(now).strftime("%Y-%m-%dT%H:%M:%S")
+    last_execution_human_readable = datetime.utcfromtimestamp(last_timestamp).strftime(
+        "%Y-%m-%dT%H:%M:%S"
+    )
+
+    if not gh_token:
+        console.print("Please provide a GitHub OAuth token")
+        exit(4)
 
     with console.status("Checking for updates...", spinner="arc"):
-        for bundle_name, package in packages.items():
-            if obs.package_was_updated(
-                last_timestamp,
-                package,
-                credentials,
-                api_url
-            ):
-                table.add_row(bundle_name, package.project, package.name)
+        updates = _calculate_updated_packages(
+            last_timestamp, origins, credentials, api_url
+        )
 
-    console.print(table)
+    updates_header = textwrap.dedent(
+        """\
+        | Bundle Package Name | Origin Project Name | Origin Package Name |
+        |---------------------|---------------------|---------------------|
+        """)
+    rows = [f"|{bundle}|{project}|{package}|" for bundle, project, package in updates]
+    updates_str = updates_header + "\n".join(rows)
+
+    issue_body = issue_body_template.substitute(
+        {
+            "last_execution": last_execution_human_readable,
+            "updates": updates_str,
+            "last_execution_ts": last_timestamp,
+            "now": now_human_readable,
+        }
+    )
+
+    with console.status("Creating issue...", spinner="arc"):
+        url = gh.create_issue_in_board(
+            repo_name=gh_repo,
+            title=issue_title,
+            body=issue_body,
+            label_names = issue_labels,
+            gh_token=gh_token,
+            column_id=gh_column_id,
+        )
+    console.print(f"View the issue at {url}")
+
+
+def _calculate_updated_packages(last_execution, origins, credentials, api_url):
+    updates = []
+    packages = {
+        bundle_name: Package(project=p["project"], name=p["package"])
+        for bundle_name, p in origins.items()
+    }
+
+    for bundle_name, package in packages.items():
+        if obs.package_was_updated(last_execution, package, credentials, api_url):
+            updates.append((bundle_name, package.project, package.name))
+
+    return updates
+
+
+def _maybe_update_timestamp(no_update_timestamp, last_timestamp_file, current_time):
     if no_update_timestamp:
         exit(0)
 
-    now = Timestamp(time.time())
     with open(last_timestamp_file, "w") as f:
-        f.write(str(now))
-
-
-def create_issue():
-    ...
+        f.write(str(current_time))

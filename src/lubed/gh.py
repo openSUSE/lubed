@@ -34,11 +34,12 @@ def create_issue_in_board(
         label_names,
     )
     _add_issue_to_column(issue, column_id, client)
+    return issue.html_url
 
 
 def _add_issue_to_column(issue, column_id, client):
     column = client.get_project_column(column_id)
-    column.create_card(content_id=issue.node_id, content_type="Issue")
+    column.create_card(content_id=issue.id, content_type="Issue")
 
 
 def _create_issue(

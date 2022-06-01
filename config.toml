@@ -1,5 +1,12 @@
+[obs] # optional section
 bundle_project = "systemsmanagement:saltstack:bundle"
 api_baseurl = "https://api.opensuse.org"
+
+[github] # optional section
+# Right click on the three dots of the column, copy the link and extract the id
+# -> number after "column-"
+repo = "SUSE/spacewalk"
+column_id = 18813228
 
 [origins]
 [origins.saltbundlepy]

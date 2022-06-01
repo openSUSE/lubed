@@ -1,7 +1,4 @@
-#!/usr/bin/python3
 from dataclasses import dataclass
-
-import tomli
 
 Timestamp = int
 
@@ -19,8 +16,3 @@ class OBSCredentials:
 
     def as_tuple(self):
         return (self.username, self.password)
-
-
-def read_config(filename: str) -> dict:
-    with open(filename, "rb") as f:
-        return tomli.load(f)

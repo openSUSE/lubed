@@ -17,7 +17,7 @@ def cli():
 
 
 @cli.command()
-@click.option("--last-timestamp-file", type=click.Path(), default=".last_timestamp")
+@click.option("--last-timestamp-file", type=click.Path(), default=".last_execution")
 @click.option(
     "--force",
     default=False,
@@ -155,7 +155,7 @@ def subprojects_containing(
 @click.option(
     "--last-timestamp-file",
     type=click.Path(),
-    default=".last_timestamp",
+    default=".last_execution",
     help="File containing the last execution time in Unix time format.",
 )
 @click.option(

@@ -1,15 +1,15 @@
-import time
 import string
+import os
 import textwrap
-from datetime import datetime
+import time
 from collections import ChainMap
+from datetime import datetime
 
 import click
 import rich.console
 import rich.table
 
-from lubed import Package, Timestamp, OBSCredentials
-from lubed import obs, config, gh
+from lubed import OBSCredentials, Package, Timestamp, config, gh, obs
 
 console = rich.console.Console()
 
@@ -46,16 +46,6 @@ def init(last_timestamp_file, force):
     help="Config file location, TOML format",
 )
 @click.option(
-    "--obs-username",
-    envvar="OBSUSER",
-    help="OBS API username, can be passed via the environment variable OBSUSER as well.",
-)
-@click.option(
-    "--obs-password",
-    envvar="OBSPASSWD",
-    help="OBS API password, can be passed via the environment variable OBSPASSWD as well.",
-)
-@click.option(
     "--search-subprojects",
     default=False,
     flag_value=True,
@@ -67,14 +57,25 @@ def init(last_timestamp_file, force):
     multiple=True,
     help="Exclude all subprojects that contain the specified string. Can be used multiple times.",
 )
-def not_in_conf(
-    config_path, obs_username, obs_password, search_subprojects, exclude_subproject
-) -> None:
+def not_in_conf(config_path, search_subprojects, exclude_subproject) -> None:
     """List packages missing from the [origins] table in the config file."""
     conf = ChainMap(config.load(config_path), config.DEFAULTS)
     project_name = conf["obs"]["bundle_project"]
     api_url = conf["obs"]["api_baseurl"]
+    obs_username = os.getenv("OBSUSER")
+    obs_password = os.getenv("OBSPASSWD")
+    try:
+        if not obs_username:
+            obs_username = config.oscrc(api_url, "user")
+
+        if not obs_password:
+            obs_password = config.oscrc(api_url, "pass")
+    except config.OSCError as e:
+        console.print(f"Can't fall back to oscrc for authentication:\n{e}")
+        exit(5)
+
     credentials = OBSCredentials(obs_username, obs_password)
+
     with console.status("Gathering projects...", spinner="arc"):
         projects = [project_name]
         if search_subprojects:
@@ -110,29 +111,28 @@ def not_in_conf(
     help="Config file location, TOML format",
 )
 @click.option(
-    "--obs-username",
-    envvar="OBSUSER",
-    help="OBS API username, can be passed via the environment variable OBSUSER as well.",
-)
-@click.option(
-    "--obs-password",
-    envvar="OBSPASSWD",
-    help="OBS API password, can be passed via the environment variable OBSPASSWD as well.",
-)
-@click.option(
     "--exclude-subproject",
     default=(),
     multiple=True,
     help="Exclude all subprojects that contain the specified string. Can be used multiple times.",
 )
 @click.argument("packages", nargs=-1)
-def subprojects_containing(
-    config_path, obs_username, obs_password, exclude_subproject, packages
-) -> None:
+def subprojects_containing(config_path, exclude_subproject, packages) -> None:
     """List all subprojects that contain the specified packages."""
     conf = ChainMap(config.load(config_path), config.DEFAULTS)
     project_name = conf["obs"]["bundle_project"]
     api_url = conf["obs"]["api_baseurl", "https://api.opensuse.org"]
+    obs_username = os.getenv("OBSUSER")
+    obs_password = os.getenv("OBSPASSWD")
+    try:
+        if not obs_username:
+            obs_username = config.oscrc(api_url, "user")
+
+        if not obs_password:
+            obs_password = config.oscrc(api_url, "pass")
+    except config.OSCError as e:
+        console.print(f"Can't fall back to oscrc for authentication:\n{e}")
+        exit(5)
     credentials = OBSCredentials(obs_username, obs_password)
     with console.status("Gathering projects...", spinner="arc"):
         projects = [project_name] + obs.list_subprojects(
@@ -168,30 +168,29 @@ def subprojects_containing(
     help="Config file location, TOML format",
 )
 @click.option(
-    "--obs-username",
-    envvar="OBSUSER",
-    help="OBS API username, can be passed via the environment variable OBSUSER as well.",
-)
-@click.option(
-    "--obs-password",
-    envvar="OBSPASSWD",
-    help="OBS API password, can be passed via the environment variable OBSPASSWD as well.",
-)
-@click.option(
     "--no-update-timestamp",
     default=False,
     flag_value=True,
     help="Do not update the last execution timestamp.",
 )
-def updates(
-    last_timestamp_file, config_path, obs_username, obs_password, no_update_timestamp
-) -> None:
+def updates(last_timestamp_file, config_path, no_update_timestamp) -> None:
     """List all packages that were updated in their origin since last execution."""
     with open(last_timestamp_file, "r") as f:
         last_timestamp = Timestamp(f.read())
     conf = ChainMap(config.load(config_path), config.DEFAULTS)
     api_url = conf["obs"]["api_baseurl"]
     origins = conf["origins"]
+    obs_username = os.getenv("OBSUSER")
+    obs_password = os.getenv("OBSPASSWD")
+    try:
+        if not obs_username:
+            obs_username = config.oscrc(api_url, "user")
+
+        if not obs_password:
+            obs_password = config.oscrc(api_url, "pass")
+    except config.OSCError as e:
+        console.print(f"Can't fall back to oscrc for authentication:\n{e}")
+        exit(5)
     credentials = OBSCredentials(obs_username, obs_password)
     now = Timestamp(time.time())
 
@@ -225,23 +224,11 @@ def updates(
     help="Config file location, TOML format",
 )
 @click.option(
-    "--obs-username",
-    envvar="OBSUSER",
-    help="OBS API username, can be passed via the environment variable OBSUSER as well.",
-)
-@click.option(
-    "--obs-password",
-    envvar="OBSPASSWD",
-    help="OBS API password, can be passed via the environment variable OBSPASSWD as well.",
-)
-@click.option(
     "--gh-token",
     envvar="GHTOKEN",
     help="GitHub OAuth token, can be passed via the environment variable GHTOKEN",
 )
-def create_issue(
-    last_timestamp_file, config_path, obs_username, obs_password, gh_token
-):
+def create_issue(last_timestamp_file, config_path, gh_token):
     """Create a GitHub issue which includes the list of needed updates."""
     with open(last_timestamp_file, "r") as f:
         last_timestamp = Timestamp(f.read())
@@ -253,6 +240,17 @@ def create_issue(
     issue_body_template = string.Template(conf["github"]["issue"]["body"])
     issue_labels = conf["github"]["issue"]["labels"]
     origins = conf["origins"]
+    obs_username = os.getenv("OBSUSER")
+    obs_password = os.getenv("OBSPASSWD")
+    try:
+        if not obs_username:
+            obs_username = config.oscrc(api_url, "user")
+
+        if not obs_password:
+            obs_password = config.oscrc(api_url, "pass")
+    except config.OSCError as e:
+        console.print(f"Can't fall back to oscrc for authentication:\n{e}")
+        exit(5)
     credentials = OBSCredentials(obs_username, obs_password)
     now = Timestamp(time.time())
     now_human_readable = datetime.utcfromtimestamp(now).strftime("%Y-%m-%dT%H:%M:%S")
@@ -273,7 +271,8 @@ def create_issue(
         """\
         | Bundle Package Name | Origin Project Name | Origin Package Name |
         |---------------------|---------------------|---------------------|
-        """)
+        """
+    )
     rows = [f"|{bundle}|{project}|{package}|" for bundle, project, package in updates]
     updates_str = updates_header + "\n".join(rows)
 
@@ -291,7 +290,7 @@ def create_issue(
             repo_name=gh_repo,
             title=issue_title,
             body=issue_body,
-            label_names = issue_labels,
+            label_names=issue_labels,
             gh_token=gh_token,
             column_id=gh_column_id,
         )

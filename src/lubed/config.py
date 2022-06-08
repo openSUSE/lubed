@@ -1,6 +1,15 @@
-import tomli
-import textwrap
 import os
+import textwrap
+
+import tomli
+
+try:
+    import osc.conf
+    import osc.oscerr
+
+    HAS_OSC = True
+except ImportError:
+    HAS_OSC = False
 
 
 def load(filename: str) -> dict:
@@ -9,6 +18,22 @@ def load(filename: str) -> dict:
             return tomli.load(f)
     else:
         return {}
+
+
+class OSCError(Exception):
+    ...
+
+
+def oscrc(apiurl: str, key: str) -> str:
+    if not HAS_OSC:
+        raise OSCError("Can't import osc")
+
+    try:
+        osc.conf.get_config()
+    except osc.oscerr.ConfigMissingCredentialsError:
+        raise OSCError("No credentials available.")
+
+    return osc.conf.config["api_host_options"][apiurl][key]
 
 
 DEFAULTS = {

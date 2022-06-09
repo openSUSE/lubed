@@ -1,3 +1,5 @@
+"""CLI entrypoint to lubed."""
+# SPDX-License-Identifier: GPL-3.0-or-later
 import string
 import os
 import textwrap

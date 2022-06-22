@@ -230,7 +230,13 @@ def updates(last_timestamp_file, config_path, no_update_timestamp) -> None:
     envvar="GHTOKEN",
     help="GitHub OAuth token, can be passed via the environment variable GHTOKEN",
 )
-def create_issue(last_timestamp_file, config_path, gh_token):
+@click.option(
+    "--no-update-timestamp",
+    default=False,
+    flag_value=True,
+    help="Do not update the last execution timestamp.",
+)
+def create_issue(last_timestamp_file, config_path, gh_token, no_update_timestamp):
     """Create a GitHub issue which includes the list of needed updates."""
     with open(last_timestamp_file, "r") as f:
         last_timestamp = Timestamp(f.read())
@@ -297,6 +303,7 @@ def create_issue(last_timestamp_file, config_path, gh_token):
             column_id=gh_column_id,
         )
     console.print(f"View the issue at {url}")
+    _maybe_update_timestamp(no_update_timestamp, last_timestamp_file, now)
 
 
 def _calculate_updated_packages(last_execution, origins, credentials, api_url):

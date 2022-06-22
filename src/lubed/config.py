@@ -2,16 +2,10 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 import os
 import textwrap
+import pathlib
+import configparser
 
 import tomli
-
-try:
-    import osc.conf
-    import osc.oscerr
-
-    HAS_OSC = True
-except ImportError:
-    HAS_OSC = False
 
 
 def load(filename: str) -> dict:
@@ -27,15 +21,21 @@ class OSCError(Exception):
 
 
 def oscrc(apiurl: str, key: str) -> str:
-    if not HAS_OSC:
-        raise OSCError("Can't import osc")
-
-    try:
-        osc.conf.get_config()
-    except osc.oscerr.ConfigMissingCredentialsError:
-        raise OSCError("No credentials available.")
-
-    return osc.conf.config["api_host_options"][apiurl][key]
+    for file in (
+        os.getenv("OSC_CONFIG", ""),
+        "~/.oscrc",
+        os.getenv("XDG_CONFI_HOME", "~/.config") + "/osc/oscrc",
+    ):
+        p = pathlib.Path(file)
+        if p.exists():
+            with p.open():
+                osc_config = configparser.ConfigParser()
+                osc_config.read(p)
+                try:
+                    return osc_config[apiurl][key]
+                except KeyError as e:
+                    raise OSCError(f"Key not in config: {e}")
+    return ""
 
 
 DEFAULTS = {

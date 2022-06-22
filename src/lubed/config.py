@@ -35,10 +35,11 @@ def oscrc(apiurl: str, key: str) -> str:
                 osc_config = configparser.ConfigParser()
                 osc_config.read(p)
                 try:
-                    return osc_config[apiurl][key]
+                    return osc_config[apiurl][key].strip()
                 except KeyError as e:
                     raise OSCError(f"Key not in config: {e}")
-    return ""
+    else:
+        raise OSCError("Could not find oscrc file.")
 
 
 DEFAULTS = {

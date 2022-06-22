@@ -29,7 +29,7 @@ def oscrc(apiurl: str, key: str) -> str:
         if file is None:
             continue
 
-        p = pathlib.Path(file)
+        p = pathlib.Path(file).expanduser()
         if p.exists():
             with p.open():
                 osc_config = configparser.ConfigParser()

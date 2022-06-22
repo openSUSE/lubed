@@ -30,7 +30,7 @@ package = "python310"
 project = "SUSE:SLE-15-SP4:Update"
 package = "libsodium"
 [origins.saltbundle-swig]
-project = "SUSE:SLE-15-SP4:Update"
+project = "openSUSE:Factory"
 package = "swig"
 [origins.saltbundle-zeromq]
 project = "SUSE:SLE-15-SP4:Update"
@@ -69,7 +69,7 @@ package = "python-vectors"
 project = "SUSE:SLE-15-SP4:Update"
 package = "python-cssselect"
 [origins.saltbundlepy-cython]
-project = "SUSE:SLE-15-SP4:Update"
+project = "openSUSE:Factory"
 package = "python-cython"
 [origins.saltbundlepy-distro]
 project = "SUSE:SLE-15-SP4:Update"
@@ -96,7 +96,7 @@ package = "python-jinja2"
 project = "SUSE:SLE-15-SP4:Update"
 package = "python-kiwi"
 [origins.saltbundlepy-lxml]
-project = "SUSE:SLE-15-SP4:Update"
+project = "openSUSE:Factory"
 package = "python-lxml"
 [origins.saltbundlepy-m2crypto]
 project = "SUSE:SLE-15-SP4:Update"
@@ -120,7 +120,7 @@ package = "python-packaging"
 project = "SUSE:SLE-15-SP4:Update"
 package = "python-paramiko"
 [origins.saltbundlepy-pip]
-project = "SUSE:SLE-15-SP4:Update"
+project = "openSUSE:Factory"
 package = "python-pip"
 [origins.saltbundlepy-pluggy]
 project = "SUSE:SLE-15-SP4:Update"
@@ -168,13 +168,13 @@ package = "python-pytest"
 project = "SUSE:SLE-15-SP4:Update"
 package = "python-pytz"
 [origins.saltbundlepy-pyxattr]
-project = "SUSE:SLE-15-SP4:Update"
+project = "openSUSE:Factory"
 package = "python-pyxattr"
 [origins.saltbundlepy-pyyaml]
 project = "SUSE:SLE-15-SP4:Update"
 package = "python-pyyaml"
 [origins.saltbundlepy-pyzmq]
-project = "SUSE:SLE-15-SP4:Update"
+project = "openSUSE:Factory"
 package = "python-pyzmq"
 [origins.saltbundlepy-requests]
 project = "SUSE:SLE-15-SP4:Update"

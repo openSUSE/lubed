@@ -22,10 +22,13 @@ class OSCError(Exception):
 
 def oscrc(apiurl: str, key: str) -> str:
     for file in (
-        os.getenv("OSC_CONFIG", ""),
+        os.getenv("OSC_CONFIG"),
         "~/.oscrc",
-        os.getenv("XDG_CONFI_HOME", "~/.config") + "/osc/oscrc",
+        os.getenv("XDG_CONFIG_HOME", "~/.config") + "/osc/oscrc",
     ):
+        if file is None:
+            continue
+
         p = pathlib.Path(file)
         if p.exists():
             with p.open():

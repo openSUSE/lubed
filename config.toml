@@ -120,7 +120,7 @@ package = "python-packaging"
 project = "SUSE:SLE-15-SP4:Update"
 package = "python-paramiko"
 [origins.saltbundlepy-pip]
-project = "openSUSE:Factory"
+project = "SUSE:SLE-15-SP4:Update"
 package = "python-pip"
 [origins.saltbundlepy-pluggy]
 project = "SUSE:SLE-15-SP4:Update"

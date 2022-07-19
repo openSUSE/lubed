@@ -123,7 +123,7 @@ def subprojects_containing(config_path, exclude_subproject, packages) -> None:
     """List all subprojects that contain the specified packages."""
     conf = ChainMap(config.load(config_path), config.DEFAULTS)
     project_name = conf["obs"]["bundle_project"]
-    api_url = conf["obs"]["api_baseurl", "https://api.opensuse.org"]
+    api_url = conf["obs"]["api_baseurl"]
     obs_username = os.getenv("OBSUSER")
     obs_password = os.getenv("OBSPASSWD")
     try:

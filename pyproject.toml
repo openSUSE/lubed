@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "lubed"
-version = "0.1.0"
+version = "0.2.6"
 description = ""
 authors = ["Alexander Graul <agraul@suse.com>"]
 license = "GPL-3.0-or-later"

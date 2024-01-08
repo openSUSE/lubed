@@ -4,9 +4,14 @@ Small utility to track the dependencies of the [[https://build.opensuse.org/proj
 
 
 * Installation
-1. ~zypper install python3-poetry~
-2. ~git clone git@github.com:agraul/lubed~
-3. ~poetry install~
+#+begin_src shell
+zypper install python3-poetry libffi-devel
+git clone git@github.com:openSUSE/lubed
+cd lubed
+python3 -m venv .venv
+. .venv/bin/activate
+poetry install
+#+end_src
 
 * Configuration
 ~lubed~ needs to know where to find the origin of the dependencies.

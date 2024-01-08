@@ -31,10 +31,13 @@ def cli():
 )
 def init(last_timestamp_file, force):
     """Initialize the last-timestamp-file with the current time."""
-    with open(last_timestamp_file, "r") as f:
-        if f.read() and not force:
-            console.print(f"Use --force to override {last_timestamp_file}.")
-            exit(3)
+    try:
+        with open(last_timestamp_file, "r") as f:
+            if f.read() and not force:
+                console.print(f"Use --force to override {last_timestamp_file}.")
+                exit(3)
+    except FileNotFoundError:
+        ...
     now = Timestamp(time.time())
     with open(last_timestamp_file, "w") as f:
         f.write(str(now))

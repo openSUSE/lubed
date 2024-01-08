@@ -12,3 +12,8 @@ htmlcov
 .envrc
 
 **/__pycache__/
+
+.venv
+venv
+.last_execution
+*~

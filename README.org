@@ -8,9 +8,8 @@ Small utility to track the dependencies of the [[https://build.opensuse.org/proj
 zypper install python3-poetry libffi-devel
 git clone git@github.com:openSUSE/lubed
 cd lubed
-python3 -m venv .venv
-. .venv/bin/activate
 poetry install
+poetry shell
 #+end_src
 
 * Configuration

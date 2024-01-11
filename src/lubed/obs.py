@@ -43,7 +43,9 @@ def package_was_updated(
     :param package: OBS package to check
     :param credentials: OBS API credentials
     :param api_url: Base URL of the OBS API server, defaults to https://api.opensuse.org
-    :return: True if the package was updated, False otherwise
+    :return:
+        - package_updated: True if the package was updated, False otherwise
+        - err: True if an error occurred during the verification, False otherwise
     """
     response_text, err = _query_package(
         package=package,
@@ -81,8 +83,8 @@ def package_in_project(
     package_name: str, project_name: str, credentials: OBSCredentials, api_url: str
 ) -> bool:
     return _query_package(
-            Package(name=package_name, project=project_name), credentials, api_url
-        )[1]
+        Package(name=package_name, project=project_name), credentials, api_url
+    )[1]
 
 
 @functools.lru_cache

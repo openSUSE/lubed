@@ -4,6 +4,7 @@ import string
 import os
 import textwrap
 import time
+from contextlib import suppress
 from collections import ChainMap
 from datetime import datetime
 
@@ -31,13 +32,10 @@ def cli():
 )
 def init(last_timestamp_file, force):
     """Initialize the last-timestamp-file with the current time."""
-    try:
-        with open(last_timestamp_file, "r") as f:
-            if f.read() and not force:
-                console.print(f"Use --force to override {last_timestamp_file}.")
-                exit(3)
-    except FileNotFoundError:
-        ...
+    with suppress(FileNotFoundError), open(last_timestamp_file, "r") as f:
+        if f.read() and not force:
+            console.print(f"Use --force to override {last_timestamp_file}.")
+            exit(3)
     now = Timestamp(time.time())
     with open(last_timestamp_file, "w") as f:
         f.write(str(now))
@@ -286,8 +284,10 @@ def create_issue(last_timestamp_file, config_path, gh_token, no_update_timestamp
     updates_str = updates_header + "\n".join(rows)
 
     if bool(failures):
-        rows = [f"|{bundle}|{project}|{package}|" for bundle, project, package in failures]
-        updates_str += '\n\n' + "Failed to check the following packages:\n"
+        rows = [
+            f"|{bundle}|{project}|{package}|" for bundle, project, package in failures
+        ]
+        updates_str += "\n\n" + "Failed to check the following packages:\n"
         updates_str += updates_header
         updates_str += "\n".join(rows)
 
@@ -322,7 +322,9 @@ def _calculate_updated_packages(last_execution, origins, credentials, api_url):
     }
 
     for bundle_name, package in packages.items():
-        updated, err = obs.package_was_updated(last_execution, package, credentials, api_url)
+        updated, err = obs.package_was_updated(
+            last_execution, package, credentials, api_url
+        )
         if err:
             failures.append((bundle_name, package.project, package.name))
         elif updated:

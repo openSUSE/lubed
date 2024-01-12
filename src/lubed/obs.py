@@ -36,16 +36,18 @@ def package_was_updated(
     package: Package,
     credentials: OBSCredentials,
     api_url: str = "https://api.opensuse.org",
-) -> bool:
+) -> (bool, bool):
     """Check if an OBS package was changed since a known timestamp.
 
     :param last_check: Unix timestamp of the last check
     :param package: OBS package to check
     :param credentials: OBS API credentials
     :param api_url: Base URL of the OBS API server, defaults to https://api.opensuse.org
-    :return: True if the package was updated, False otherwise
+    :return:
+        - package_updated: True if the package was updated, False otherwise
+        - err: True if an error occurred during the verification, False otherwise
     """
-    response_text = _query_package(
+    response_text, err = _query_package(
         package=package,
         credentials=credentials,
         api_url=api_url,
@@ -53,7 +55,7 @@ def package_was_updated(
 
     timestamps = _extract_package_timestamps(response_text)
 
-    return _any_timestamp_is_newer(timestamps, last_check)
+    return _any_timestamp_is_newer(timestamps, last_check), err
 
 
 def list_subprojects(
@@ -80,11 +82,9 @@ def list_subprojects(
 def package_in_project(
     package_name: str, project_name: str, credentials: OBSCredentials, api_url: str
 ) -> bool:
-    return bool(
-        _query_package(
-            Package(name=package_name, project=project_name), credentials, api_url
-        )
-    )
+    return _query_package(
+        Package(name=package_name, project=project_name), credentials, api_url
+    )[1]
 
 
 @functools.lru_cache
@@ -148,11 +148,11 @@ def _query_package(
     package: Package,
     credentials: OBSCredentials,
     api_url: str,
-) -> str:
+) -> (str, bool):
     try:
         url = f"{api_url}/source/{package.project}/{package.name}"
         response = requests.get(url, auth=credentials.as_tuple())
         response.raise_for_status()
-        return response.text
+        return response.text, False
     except requests.RequestException:
-        return ""
+        return "", True

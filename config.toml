@@ -64,13 +64,13 @@ project = "SUSE:SLE-15-SP4:Update"
 package = "python-cryptography"
 [origins.saltbundlepy-cryptography-vectors]
 project = "SUSE:SLE-15-SP4:Update"
-package = "python-vectors"
+package = "python3-cryptography-vectors"
 [origins.saltbundlepy-cssselect]
 project = "SUSE:SLE-15-SP4:Update"
 package = "python-cssselect"
 [origins.saltbundlepy-cython]
 project = "openSUSE:Factory"
-package = "python-cython"
+package = "python-Cython"
 [origins.saltbundlepy-distro]
 project = "SUSE:SLE-15-SP4:Update"
 package = "python-distro"
@@ -78,8 +78,8 @@ package = "python-distro"
 project = "SUSE:SLE-15-SP4:Update"
 package = "python-docker"
 [origins.saltbundlepy-docker-pycreds]
-project = "SUSE:SLE-15-SP4:Update"
-package = "python-pycreds"
+project = "openSUSE:Factory"
+package = "python-docker-pycreds"
 [origins.saltbundlepy-docopt]
 project = "SUSE:SLE-15-SP4:Update"
 package = "python-docopt"
@@ -88,25 +88,28 @@ project = "SUSE:SLE-15-SP4:Update"
 package = "python-idna"
 [origins.saltbundlepy-importlib-metadata]
 project = "SUSE:SLE-15-SP4:Update"
-package = "python-metadata"
+package = "python-importlib-metadata"
 [origins.saltbundlepy-jinja2]
 project = "SUSE:SLE-15-SP4:Update"
-package = "python-jinja2"
+package = "python-Jinja2"
 [origins.saltbundlepy-kiwi]
 project = "SUSE:SLE-15-SP4:Update"
 package = "python-kiwi"
+[origins.saltbundlepy-libvirt]
+project = "SUSE:SLE-15-SP4:Update"
+package = "python-libvirt-python"
 [origins.saltbundlepy-lxml]
 project = "openSUSE:Factory"
 package = "python-lxml"
 [origins.saltbundlepy-m2crypto]
 project = "SUSE:SLE-15-SP4:Update"
-package = "python-m2crypto"
+package = "python3-M2Crypto"
 [origins.saltbundlepy-markupsafe]
 project = "SUSE:SLE-15-SP4:Update"
-package = "python-markupsafe"
+package = "python-MarkupSafe"
 [origins.saltbundlepy-more-itertools]
 project = "SUSE:SLE-15-SP4:Update"
-package = "python-itertools"
+package = "python-more-itertools"
 [origins.saltbundlepy-msgpack]
 project = "SUSE:SLE-15-SP4:Update"
 package = "python-msgpack"
@@ -139,7 +142,7 @@ project = "SUSE:SLE-15-SP4:Update"
 package = "python-pyasn1"
 [origins.saltbundlepy-pyasn1-modules]
 project = "SUSE:SLE-15-SP4:Update"
-package = "python-modules"
+package = "python-pyasn1-modules"
 [origins.saltbundlepy-pycparser]
 project = "SUSE:SLE-15-SP4:Update"
 package = "python-pycparser"
@@ -151,16 +154,19 @@ project = "SUSE:SLE-15-SP4:Update"
 package = "python-pyinotify"
 [origins.saltbundlepy-pynacl]
 project = "SUSE:SLE-15-SP4:Update"
-package = "python-pynacl"
+package = "python-PyNaCl"
 [origins.saltbundlepy-pyopenssl]
 project = "SUSE:SLE-15-SP4:Update"
-package = "python-pyopenssl"
+package = "python-pyOpenSSL"
+[origins.saltbundle-openssl]
+project = "SUSE:SLE-12-SP5:Update"
+package = "openssl"
 [origins.saltbundlepy-pyparsing]
 project = "SUSE:SLE-15-SP4:Update"
 package = "python-pyparsing"
 [origins.saltbundlepy-pysocks]
 project = "SUSE:SLE-15-SP4:Update"
-package = "python-pysocks"
+package = "python-PySocks"
 [origins.saltbundlepy-pytest]
 project = "SUSE:SLE-15-SP4:Update"
 package = "python-pytest"
@@ -172,7 +178,7 @@ project = "openSUSE:Factory"
 package = "python-pyxattr"
 [origins.saltbundlepy-pyyaml]
 project = "SUSE:SLE-15-SP4:Update"
-package = "python-pyyaml"
+package = "python-PyYAML"
 [origins.saltbundlepy-pyzmq]
 project = "openSUSE:Factory"
 package = "python-pyzmq"
@@ -181,16 +187,13 @@ project = "SUSE:SLE-15-SP4:Update"
 package = "python-requests"
 [origins.saltbundlepy-rpm-macros]
 project = "SUSE:SLE-15-SP4:Update"
-package = "python-macros"
-[origins.saltbundlepy-rpm-vercmp]
-project = "SUSE:SLE-15-SP4:Update"
-package = "python-vercmp"
+package = "python-rpm-macros"
 [origins.saltbundlepy-setuptools]
 project = "SUSE:SLE-15-SP4:Update"
 package = "python-setuptools"
 [origins.saltbundlepy-setuptools-scm]
 project = "SUSE:SLE-15-SP4:Update"
-package = "python-scm"
+package = "python-setuptools_scm"
 [origins.saltbundlepy-simplejson]
 project = "SUSE:SLE-15-SP4:Update"
 package = "python-simplejson"
@@ -203,15 +206,15 @@ package = "python-tornado"
 [origins.saltbundlepy-urllib3]
 project = "SUSE:SLE-15-SP4:Update"
 package = "python-urllib3"
-[origins.saltbundlepy-venvjail]
-project = "SUSE:SLE-15-SP4:Update"
-package = "python-venvjail"
+[origins.saltbundlepy-wcwidth]
+project = "SUSE:SLE-15-SP5:Update"
+package = "python-wcwidth"
 [origins.saltbundlepy-websocket-client]
 project = "SUSE:SLE-15-SP4:Update"
-package = "python-client"
+package = "python-websocket-client"
 [origins.saltbundlepy-zipp]
 project = "SUSE:SLE-15-SP4:Update"
 package = "python-zipp"
 [origins.saltbundlepy-zypp-plugin]
 project = "SUSE:SLE-15-SP4:Update"
-package = "python-plugin"
+package = "zypp-plugin"

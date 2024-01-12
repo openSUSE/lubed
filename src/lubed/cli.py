@@ -4,6 +4,7 @@ import string
 import os
 import textwrap
 import time
+from contextlib import suppress
 from collections import ChainMap
 from datetime import datetime
 
@@ -31,7 +32,7 @@ def cli():
 )
 def init(last_timestamp_file, force):
     """Initialize the last-timestamp-file with the current time."""
-    with open(last_timestamp_file, "r") as f:
+    with suppress(FileNotFoundError), open(last_timestamp_file, "r") as f:
         if f.read() and not force:
             console.print(f"Use --force to override {last_timestamp_file}.")
             exit(3)
@@ -197,17 +198,15 @@ def updates(last_timestamp_file, config_path, no_update_timestamp) -> None:
     now = Timestamp(time.time())
 
     with console.status("Checking for updates...", spinner="arc"):
-        updates = _calculate_updated_packages(
+        updates, failures = _calculate_updated_packages(
             last_timestamp, origins, credentials, api_url
         )
 
-    table = rich.table.Table(title="Packages Updated in Origin")
-    table.add_column("Bundle Package Name")
-    table.add_column("Origin Project Name")
-    table.add_column("Origin Package Name")
-    for updated_package in updates:
-        table.add_row(*updated_package)
-    console.print(table)
+    cols = ["Bundle Package Name", "Origin Project Name", "Origin Package Name"]
+    _print_table("Packages Updated in Origin", cols, updates)
+
+    if bool(failures):
+        _print_table("Packages that Failed to Check", cols, failures)
 
     _maybe_update_timestamp(no_update_timestamp, last_timestamp_file, now)
 
@@ -271,7 +270,7 @@ def create_issue(last_timestamp_file, config_path, gh_token, no_update_timestamp
         exit(4)
 
     with console.status("Checking for updates...", spinner="arc"):
-        updates = _calculate_updated_packages(
+        updates, failures = _calculate_updated_packages(
             last_timestamp, origins, credentials, api_url
         )
 
@@ -283,6 +282,14 @@ def create_issue(last_timestamp_file, config_path, gh_token, no_update_timestamp
     )
     rows = [f"|{bundle}|{project}|{package}|" for bundle, project, package in updates]
     updates_str = updates_header + "\n".join(rows)
+
+    if bool(failures):
+        rows = [
+            f"|{bundle}|{project}|{package}|" for bundle, project, package in failures
+        ]
+        updates_str += "\n\n" + "Failed to check the following packages:\n"
+        updates_str += updates_header
+        updates_str += "\n".join(rows)
 
     issue_body = issue_body_template.substitute(
         {
@@ -308,16 +315,22 @@ def create_issue(last_timestamp_file, config_path, gh_token, no_update_timestamp
 
 def _calculate_updated_packages(last_execution, origins, credentials, api_url):
     updates = []
+    failures = []
     packages = {
         bundle_name: Package(project=p["project"], name=p["package"])
         for bundle_name, p in origins.items()
     }
 
     for bundle_name, package in packages.items():
-        if obs.package_was_updated(last_execution, package, credentials, api_url):
+        updated, err = obs.package_was_updated(
+            last_execution, package, credentials, api_url
+        )
+        if err:
+            failures.append((bundle_name, package.project, package.name))
+        elif updated:
             updates.append((bundle_name, package.project, package.name))
 
-    return updates
+    return updates, failures
 
 
 def _maybe_update_timestamp(no_update_timestamp, last_timestamp_file, current_time):
@@ -326,3 +339,14 @@ def _maybe_update_timestamp(no_update_timestamp, last_timestamp_file, current_ti
 
     with open(last_timestamp_file, "w") as f:
         f.write(str(current_time))
+
+
+def _print_table(title: str, columns: list, rows: list):
+    table = rich.table.Table(title=title)
+    for col in columns:
+        table.add_column(col)
+
+    for row in rows:
+        table.add_row(*row)
+
+    console.print(table)

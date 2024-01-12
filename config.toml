@@ -6,6 +6,7 @@ api_baseurl = "https://api.opensuse.org"
 # Right click on the three dots of the column, copy the link and extract the id
 # -> number after "column-"
 repo = "SUSE/spacewalk"
+project_board_id = "PVT_kwDOABBK1c4AO0-4"
 column_id = 6164736
 [github.issue]
 title = "Update Salt Bundle Dependencies"

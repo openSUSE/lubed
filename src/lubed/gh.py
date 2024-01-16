@@ -40,11 +40,11 @@ def assign_issue_to_board(
     )
 
 
-def get_issue_node_id(issue_num: int, repository: str, gh_token: str) -> str:
+def get_issue_node_id(issue_num: int, repo_name: str, gh_token: str) -> str:
     """Get Issue node ID based on the issue's number within a project.
 
     :param issue_num: Number of the issue in a repository (visible in the issue URL).
-    :param repository: "owner/repo" of the GitHub repo of the issue.
+    :param repo_name: "owner/repo" of the GitHub repo of the issue.
     :param gh_token: GitHub OAuth token.
     :returns: Issue Node ID useful for Github GraphQL API queries.
     """
@@ -61,7 +61,7 @@ def get_issue_node_id(issue_num: int, repository: str, gh_token: str) -> str:
     """
     )
 
-    owner, repo = repository.split("/")
+    owner, repo = repo_name.split("/")
     resp = client.execute(
         issue_number_to_id,
         variable_values={"owner": owner, "repo": repo, "num": issue_num},
@@ -75,7 +75,7 @@ def create_issue_in_board(
     title: str,
     body: str,
     gh_token: str,
-    column_id: str,
+    board_id: str,
     label_names: List[str] = None,
 ):
     """Create an issue and add it to a column on a project board.
@@ -99,13 +99,11 @@ def create_issue_in_board(
         client,
         label_names,
     )
-    _add_issue_to_column(issue, column_id, client)
+
+    issue_node_id = get_issue_node_id(issue.number, repo_name, gh_token)
+    assign_issue_to_board(issue_node_id, board_id, gh_token)
+
     return issue
-
-
-def _add_issue_to_column(issue, column_id, client):
-    column = client.get_project_column(column_id)
-    column.create_card(content_id=issue.id, content_type="Issue")
 
 
 def _get_gql_client(gh_token: str):

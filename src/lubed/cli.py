@@ -242,7 +242,7 @@ def create_issue(last_timestamp_file, config_path, gh_token, no_update_timestamp
     conf = ChainMap(config.load(config_path), config.DEFAULTS)
     api_url = conf["obs"]["api_baseurl"]
     gh_repo = conf["github"]["repo"]
-    gh_column_id = conf["github"]["column_id"]
+    gh_project_board_id = conf["github"]["project_board_id"]
     issue_title = conf["github"]["issue"]["title"]
     issue_body_template = string.Template(conf["github"]["issue"]["body"])
     issue_labels = conf["github"]["issue"]["labels"]
@@ -301,15 +301,16 @@ def create_issue(last_timestamp_file, config_path, gh_token, no_update_timestamp
     )
 
     with console.status("Creating issue...", spinner="arc"):
-        url = gh.create_issue_in_board(
+        issue = gh.create_issue_in_board(
             repo_name=gh_repo,
             title=issue_title,
             body=issue_body,
             label_names=issue_labels,
             gh_token=gh_token,
-            column_id=gh_column_id,
+            board_id=gh_project_board_id,
         )
-    console.print(f"View the issue at {url}")
+
+    console.print(f"View the issue at {issue.html_url}")
     _maybe_update_timestamp(no_update_timestamp, last_timestamp_file, now)
 
 

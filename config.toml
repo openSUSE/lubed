@@ -71,6 +71,9 @@ package = "python-cssselect"
 [origins.saltbundlepy-cython]
 project = "openSUSE:Factory"
 package = "python-Cython"
+[origins.saltbundlepy-dbus-python]
+project = "SUSE:SLE-15-SP6:Update"
+package = "python-dbus-python"
 [origins.saltbundlepy-distro]
 project = "SUSE:SLE-15-SP4:Update"
 package = "python-distro"

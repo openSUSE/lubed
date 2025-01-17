@@ -25,7 +25,7 @@ labels = ["ion-squad", "salt-bundle"]
 [origins]
 [origins.saltbundlepy]
 project = "SUSE:SLE-15-SP4:Update"
-package = "python310"
+package = "python311"
 [origins.saltbundle-libsodium]
 project = "SUSE:SLE-15-SP4:Update"
 package = "libsodium"

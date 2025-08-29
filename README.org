@@ -4,12 +4,23 @@ Small utility to track the dependencies of the [[https://build.opensuse.org/proj
 
 
 * Installation
+**  With =pip=
 #+begin_src shell
-zypper install python3-poetry libffi-devel
+VERSION=
+python3 -m venv .venv
+. .venv/bin/activate
+pip install https://github.com/openSUSE/lubed/releases/download/v$VERSION/lubed-$VERSION-py3-none-any.whl
+lubed --help
+#+end_src
+
+** With =uv= (development)
+#+begin_src shell
+zypper install python3-uv
 git clone git@github.com:openSUSE/lubed
 cd lubed
-poetry install
-poetry shell
+uv venv
+uv sync --dev
+uv run lubed --help
 #+end_src
 
 * Configuration
@@ -36,11 +47,3 @@ inheritance.
   =origins= table in =config.toml=.
 - ~lubed create-issue~ -> create a GitHub issue with the list of all packages
   that need an update
-
-* Alternative approach
-1. list of bundled packages api /source/<project-name>
-2. mapping bundled package -> origin (project/package) (project one of:
-   openSUSE:Factory or SUSE:SLE-15-SP4:Update)
-3. for all origins: save revision id
-4. for all origins: check if revision id changed, produce diff between old and
-   new revision

@@ -1,6 +1,7 @@
 """CLI entrypoint to lubed."""
 
 # SPDX-License-Identifier: GPL-3.0-or-later
+import os
 import string
 import time
 from contextlib import suppress
@@ -46,7 +47,7 @@ def init(last_timestamp_file, force):
 @click.option(
     "--config-path",
     type=click.Path(exists=True, dir_okay=False),
-    default="config.toml",
+    default=os.path.dirname(__file__) + "/config.toml",
     help="Config file location, TOML format",
 )
 @click.option(
@@ -104,7 +105,7 @@ def not_in_conf(config_path, search_subprojects, exclude_subproject) -> None:
 @click.option(
     "--config-path",
     type=click.Path(exists=True, dir_okay=False),
-    default="config.toml",
+    default=os.path.dirname(__file__) + "/config.toml",
     help="Config file location, TOML format",
 )
 @click.option(
@@ -155,7 +156,7 @@ def subprojects_containing(config_path, exclude_subproject, packages) -> None:
 @click.option(
     "--config-path",
     type=click.Path(exists=True, dir_okay=False),
-    default="config.toml",
+    default=os.path.dirname(__file__) + "/config.toml",
     help="Config file location, TOML format",
 )
 @click.option(
@@ -198,7 +199,7 @@ def updates(last_timestamp_file, config_path, no_update_timestamp) -> None:
 @click.option(
     "--config-path",
     type=click.Path(exists=True, dir_okay=False),
-    default="config.toml",
+    default=os.path.dirname(__file__) + "/config.toml",
     help="Config file location, TOML format",
 )
 @click.option(

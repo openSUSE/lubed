@@ -1,8 +1,9 @@
 """OBS API mini client."""
+
 # SPDX-License-Identifier: GPL-3.0-or-later
 import functools
 import urllib.parse
-from typing import List
+from typing import List, Tuple
 from xml.etree import ElementTree
 
 import requests
@@ -36,7 +37,7 @@ def package_was_updated(
     package: Package,
     credentials: OBSCredentials,
     api_url: str = "https://api.opensuse.org",
-) -> (bool, bool):
+) -> Tuple[bool, bool]:
     """Check if an OBS package was changed since a known timestamp.
 
     :param last_check: Unix timestamp of the last check
@@ -148,7 +149,7 @@ def _query_package(
     package: Package,
     credentials: OBSCredentials,
     api_url: str,
-) -> (str, bool):
+) -> Tuple[str, bool]:
     try:
         url = f"{api_url}/source/{package.project}/{package.name}"
         response = requests.get(url, auth=credentials.as_tuple())

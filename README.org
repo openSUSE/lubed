@@ -6,7 +6,7 @@ Small utility to track the dependencies of the [[https://build.opensuse.org/proj
 * Installation
 **  With =pip=
 #+begin_src shell
-VERSION=
+VERSION=1.0
 python3 -m venv .venv
 . .venv/bin/activate
 pip install https://github.com/openSUSE/lubed/releases/download/v$VERSION/lubed-$VERSION-py3-none-any.whl

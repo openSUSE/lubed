@@ -1,6 +1,6 @@
 [project]
 name = "lubed"
-version = "0.2.6"
+version = "1.0"
 description = "List Updates in Salt Bundle Dependencies"
 authors = [{ name = "Alexander Graul", email = "agraul@suse.com" }]
 requires-python = ">=3.11"

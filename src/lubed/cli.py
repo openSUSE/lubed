@@ -1,16 +1,17 @@
 """CLI entrypoint to lubed."""
+
 # SPDX-License-Identifier: GPL-3.0-or-later
 import string
-import textwrap
 import time
 from contextlib import suppress
 from datetime import datetime
 
 import click
+import rich.box
 import rich.console
 import rich.table
 
-from lubed import OBSCredentials, Package, Timestamp, config, gh, obs
+from lubed import Timestamp, config, core, gh, obs
 
 console = rich.console.Console()
 
@@ -30,12 +31,14 @@ def cli():
 )
 def init(last_timestamp_file, force):
     """Initialize the last-timestamp-file with the current time."""
-    with suppress(FileNotFoundError), open(last_timestamp_file, "r") as f:
+    with suppress(FileNotFoundError), open(
+        last_timestamp_file, "r", encoding="utf-8"
+    ) as f:
         if f.read() and not force:
             console.print(f"Use --force to override {last_timestamp_file}.")
             exit(3)
     now = Timestamp(time.time())
-    with open(last_timestamp_file, "w") as f:
+    with open(last_timestamp_file, "w", encoding="utf-8") as f:
         f.write(str(now))
 
 
@@ -84,10 +87,11 @@ def not_in_conf(config_path, search_subprojects, exclude_subproject) -> None:
             )
 
     table = rich.table.Table(
-        title=f"Packages missing from {click.format_filename(config_path)}"
+        title=f"Packages missing from {click.format_filename(config_path)}",
+        box=rich.box.SIMPLE,
     )
     table.add_column("Project")
-    table.add_column("Packages")
+    table.add_column("Package")
 
     for project, packages in project_packages.items():
         for package in packages:
@@ -126,9 +130,9 @@ def subprojects_containing(config_path, exclude_subproject, packages) -> None:
             project_name, credentials, api_url
         )
 
-    table = rich.table.Table()
+    table = rich.table.Table(box=rich.box.SIMPLE)
     table.add_column("Package")
-    table.add_column("Projects")
+    table.add_column("Project")
 
     with console.status("Checking projects for packages...", spinner="arc"):
         for package in packages:
@@ -162,28 +166,24 @@ def subprojects_containing(config_path, exclude_subproject, packages) -> None:
 )
 def updates(last_timestamp_file, config_path, no_update_timestamp) -> None:
     """List all packages that were updated in their origin since last execution."""
-    with open(last_timestamp_file, "r") as f:
+    with open(last_timestamp_file, "r", encoding="utf-8") as f:
         last_timestamp = Timestamp(f.read())
     conf = config.load(config_path)
-    api_url = conf["obs"]["api_baseurl"]
-    origins = conf["origins"]
-    try:
-        credentials = config.credentials(api_url)
-    except config.OSCError as e:
-        console.print(f"Can't fall back to oscrc for authentication:\n{e}")
-        exit(5)
     now = Timestamp(time.time())
 
     with console.status("Checking for updates...", spinner="arc"):
-        updates, failures = _calculate_updated_packages(
-            last_timestamp, origins, credentials, api_url
-        )
+        try:
+            updated_pkgs, failures = core.calculate_updated_packages(
+                last_execution=last_timestamp, conf=conf
+            )
+        except RuntimeError as e:
+            console.print(e)
+            exit(5)
 
-    cols = ["Bundle Package Name", "Origin Project Name", "Origin Package Name"]
-    _print_table("Packages Updated in Origin", cols, updates)
+    _print_table(title="Packages Updated in Origin", packages=updated_pkgs)
 
-    if bool(failures):
-        _print_table("Packages that Failed to Check", cols, failures)
+    if failures:
+        _print_table(title="Packages that Failed to Check", packages=failures)
 
     _maybe_update_timestamp(no_update_timestamp, last_timestamp_file, now)
 
@@ -214,7 +214,7 @@ def updates(last_timestamp_file, config_path, no_update_timestamp) -> None:
 )
 def create_issue(last_timestamp_file, config_path, gh_token, no_update_timestamp):
     """Create a GitHub issue which includes the list of needed updates."""
-    with open(last_timestamp_file, "r") as f:
+    with open(last_timestamp_file, "r", encoding="utf-8") as f:
         last_timestamp = Timestamp(f.read())
     conf = config.load(config_path)
     gh_repo = conf["github"]["repo"]
@@ -234,31 +234,18 @@ def create_issue(last_timestamp_file, config_path, gh_token, no_update_timestamp
         exit(4)
 
     with console.status("Checking for updates...", spinner="arc"):
-        updates, failures = _calculate_updated_packages(
-            last_timestamp, origins, credentials, api_url
-        )
-
-    updates_header = textwrap.dedent(
-        """\
-        | Bundle Package Name | Origin Project Name | Origin Package Name |
-        |---------------------|---------------------|---------------------|
-        """
-    )
-    rows = [f"|{bundle}|{project}|{package}|" for bundle, project, package in updates]
-    updates_str = updates_header + "\n".join(rows)
-
-    if bool(failures):
-        rows = [
-            f"|{bundle}|{project}|{package}|" for bundle, project, package in failures
-        ]
-        updates_str += "\n\n" + "Failed to check the following packages:\n"
-        updates_str += updates_header
-        updates_str += "\n".join(rows)
+        try:
+            updated_pkgs, failures = core.calculate_updated_packages(
+                last_execution=last_timestamp, conf=conf
+            )
+        except RuntimeError as e:
+            console.print(e)
+            exit(5)
 
     issue_body = issue_body_template.substitute(
         {
             "last_execution": last_execution_human_readable,
-            "updates": updates_str,
+            "updates": gh.format_updates_md(updated_pkgs, failures),
             "last_execution_ts": last_timestamp,
             "now": now_human_readable,
         }
@@ -278,40 +265,23 @@ def create_issue(last_timestamp_file, config_path, gh_token, no_update_timestamp
     _maybe_update_timestamp(no_update_timestamp, last_timestamp_file, now)
 
 
-def _calculate_updated_packages(last_execution, origins, credentials, api_url):
-    updates = []
-    failures = []
-    packages = {
-        bundle_name: Package(project=p["project"], name=p["package"])
-        for bundle_name, p in origins.items()
-    }
-
-    for bundle_name, package in packages.items():
-        updated, err = obs.package_was_updated(
-            last_execution, package, credentials, api_url
-        )
-        if err:
-            failures.append((bundle_name, package.project, package.name))
-        elif updated:
-            updates.append((bundle_name, package.project, package.name))
-
-    return updates, failures
-
-
 def _maybe_update_timestamp(no_update_timestamp, last_timestamp_file, current_time):
     if no_update_timestamp:
         exit(0)
 
-    with open(last_timestamp_file, "w") as f:
+    with open(last_timestamp_file, "w", encoding="utf-8") as f:
         f.write(str(current_time))
 
 
-def _print_table(title: str, columns: list, rows: list):
-    table = rich.table.Table(title=title)
-    for col in columns:
-        table.add_column(col)
-
-    for row in rows:
-        table.add_row(*row)
+def _print_table(title: str, packages: list):
+    table = rich.table.Table(
+        "Bundle Package Name",
+        "Origin Project Name",
+        "Origin Package Name",
+        title=title,
+        box=rich.box.SIMPLE,
+    )
+    for package in packages:
+        table.add_row(*package)
 
     console.print(table)

@@ -1,6 +1,8 @@
 [obs]
 bundle_project = "systemsmanagement:saltstack:bundle"
 api_baseurl = "https://api.opensuse.org"
+gitserver_baseurl = "https://src.opensuse.org"
+git_managed_projects = ["SUSE:SLFO:1.2"]
 
 [github]
 repo = "SUSE/spacewalk"

@@ -37,6 +37,7 @@ def package_was_updated(
     package: Package,
     credentials: OBSCredentials,
     api_url: str = "https://api.opensuse.org",
+    gitserver_url: str = "",
 ) -> Tuple[bool, bool]:
     """Check if an OBS package was changed since a known timestamp.
 
@@ -44,10 +45,12 @@ def package_was_updated(
     :param package: OBS package to check
     :param credentials: OBS API credentials
     :param api_url: Base URL of the OBS API server, defaults to https://api.opensuse.org
+    :param gitserver_url: Not used, just for API compatibility
     :return:
         - package_updated: True if the package was updated, False otherwise
         - err: True if an error occurred during the verification, False otherwise
     """
+    del gitserver_url  # not used
     response_text, err = _query_package(
         package=package,
         credentials=credentials,
@@ -84,7 +87,9 @@ def package_in_project(
     package_name: str, project_name: str, credentials: OBSCredentials, api_url: str
 ) -> bool:
     return _query_package(
-        Package(name=package_name, project=project_name), credentials, api_url
+        Package(name=package_name, project=project_name, git_managed=False),
+        credentials,
+        api_url,
     )[1]
 
 

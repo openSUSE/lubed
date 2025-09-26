@@ -86,6 +86,8 @@ def not_in_conf(config_path, search_subprojects, exclude_subproject) -> None:
             project_packages.setdefault(project, []).extend(
                 obs.list_packages(project, credentials, api_url)
             )
+            if "venv-salt-minion" in project_packages[project]:
+                project_packages[project].remove("venv-salt-minion")
 
     table = rich.table.Table(
         title=f"Packages missing from {click.format_filename(config_path)}",

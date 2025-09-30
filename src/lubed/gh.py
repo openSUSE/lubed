@@ -1,9 +1,11 @@
 """Interact with GitHub and create issues"""
-# SPDX-License-Identifier: GPL-3.0-or-later
-from typing import Any, Dict, List
-import github
 
-from gql import gql, Client
+# SPDX-License-Identifier: GPL-3.0-or-later
+import textwrap
+from typing import Any, Dict, List
+
+import github
+from gql import Client, gql
 from gql.transport.aiohttp import AIOHTTPTransport
 
 
@@ -132,3 +134,23 @@ def _create_issue(
     repo = client.get_repo(repo_name)
     labels = [repo.get_label(l) for l in label_names]
     return repo.create_issue(title=title, body=body, labels=labels)
+
+
+def format_updates_md(updates, failures):
+    updates_header = textwrap.dedent(
+        """\
+        | Bundle Package Name | Origin Project Name | Origin Package Name |
+        |---------------------|---------------------|---------------------|
+        """
+    )
+    rows = [f"|{bundle}|{project}|{package}|" for bundle, project, package in updates]
+    updates_str = updates_header + "\n".join(rows)
+
+    if failures:
+        rows = [
+            f"|{bundle}|{project}|{package}|" for bundle, project, package in failures
+        ]
+        updates_str += "\n\n" + "Failed to check the following packages:\n"
+        updates_str += updates_header
+        updates_str += "\n".join(rows)
+    return updates_str

@@ -1,8 +1,9 @@
 """OBS API mini client."""
+
 # SPDX-License-Identifier: GPL-3.0-or-later
 import functools
 import urllib.parse
-from typing import List
+from typing import List, Tuple
 from xml.etree import ElementTree
 
 import requests
@@ -36,17 +37,20 @@ def package_was_updated(
     package: Package,
     credentials: OBSCredentials,
     api_url: str = "https://api.opensuse.org",
-) -> (bool, bool):
+    gitserver_url: str = "",
+) -> Tuple[bool, bool]:
     """Check if an OBS package was changed since a known timestamp.
 
     :param last_check: Unix timestamp of the last check
     :param package: OBS package to check
     :param credentials: OBS API credentials
     :param api_url: Base URL of the OBS API server, defaults to https://api.opensuse.org
+    :param gitserver_url: Not used, just for API compatibility
     :return:
         - package_updated: True if the package was updated, False otherwise
         - err: True if an error occurred during the verification, False otherwise
     """
+    del gitserver_url  # not used
     response_text, err = _query_package(
         package=package,
         credentials=credentials,
@@ -83,7 +87,9 @@ def package_in_project(
     package_name: str, project_name: str, credentials: OBSCredentials, api_url: str
 ) -> bool:
     return _query_package(
-        Package(name=package_name, project=project_name), credentials, api_url
+        Package(name=package_name, project=project_name, git_managed=False),
+        credentials,
+        api_url,
     )[1]
 
 
@@ -148,7 +154,7 @@ def _query_package(
     package: Package,
     credentials: OBSCredentials,
     api_url: str,
-) -> (str, bool):
+) -> Tuple[str, bool]:
     try:
         url = f"{api_url}/source/{package.project}/{package.name}"
         response = requests.get(url, auth=credentials.as_tuple())

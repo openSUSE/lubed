@@ -18,6 +18,13 @@ $updates
 
 Please use `echo $last_execution_ts >.last_execution && lubed updates` for an up-to-date list.
 
+### Important:
+If any of the updated dependencies contains CVE fixes, we must mention those CVEs and bugzilla references in the changelog of our `venv-salt-minion` package. This needs to be done adding a changelog entry manually.
+
+### TODO
+- [ ] Update Salt Bundle dependencies.
+- [ ] Add any new CVE reference in updated dependencies to the changelog of `venv-salt-minion` package.
+
 _This issue was generated automatically._
 """
 labels = ["ion-squad", "salt-bundle"]

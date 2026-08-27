@@ -64,8 +64,8 @@ package = "python-asn1crypto"
 project = "SUSE:SLE-15-SP4:Update"
 package = "python-atomicwrites"
 [origins.saltbundlepy-attrs]
-# It's used by pytest only
-project = "SUSE:SLE-15-SP4:Update"
+# It's used by pytest as binary package dependency
+project = "SUSE:SLFO:1.2"
 package = "python-attrs"
 [origins.saltbundlepy-bcrypt]
 # bcrypt can't be updated to the versions higher than 4.x.x
@@ -99,7 +99,7 @@ package = "python-cssselect"
 project = "SUSE:SLFO:1.2"
 package = "python-Cython"
 [origins.saltbundlepy-dateutil]
-project = "SUSE:SLE-15-SP4:Update"
+project = "SUSE:SLFO:1.2"
 package = "python-python-dateutil"
 [origins.saltbundlepy-dbus-python]
 project = "SUSE:SLE-15-SP6:Update"
@@ -111,6 +111,7 @@ package = "python-distro"
 project = "SUSE:SLFO:1.2"
 package = "python-docker"
 [origins.saltbundlepy-docker-pycreds]
+# Most probably not needed anymore as it was dropped from docker module package
 project = "SUSE:SLE-15-SP4:Update"
 package = "python-docker-pycreds"
 [origins.saltbundlepy-docopt]
@@ -179,43 +180,65 @@ package = "python-libvirt-python"
 project = "openSUSE:Factory"
 package = "python-libvirt-python"
 [origins.saltbundlepy-looseversion]
+# Still used in salt.utils.versions changing the behaviour of default LooseVersion slightly
 project = "SUSE:SLFO:1.2"
 package = "python-looseversion"
 [origins.saltbundlepy-lxml]
+# Imported conditionally with salt.modules.junos and salt.cloud.clouds.opennebula,
+# but was not included to the resulting binary bundle package as there were no
+# any other dependencies requiring it even if it was listed in include-(rpm|deb)
+# Most probably could be deleted with no issues.
+# ADD: Used by libvirt as a dependency for tests
 project = "openSUSE:Factory"
 package = "python-lxml"
 [origins.saltbundlepy-m2crypto]
-project = "SUSE:SLE-15-SP4:Update"
+# Still used in openSUSE/salt 3006.0, but in upstream 3006.x and 3008.x is conditional
+# and mostly used in deprecated x509 module which will be dropped in 3009
+project = "SUSE:SLFO:1.2"
 package = "python3-M2Crypto"
 [origins.saltbundlepy-markupsafe]
+# Used by Jinja2
 project = "SUSE:SLFO:1.2"
 package = "python-MarkupSafe"
 [origins.saltbundlepy-more-itertools]
+# Looks like required only by zipp module in test section which is used by importlib-metadata.
+# Most probaby could be dropped as importlib-metadata seems unused.
+# IMPORTANT: Could be still used by testsuite as seems required by cheroot and cherrypy
+# In this case could be moved to test-dependencies.
 project = "SUSE:SLE-15-SP4:Update"
 package = "python-more-itertools"
 [origins.saltbundlepy-msgpack]
 project = "SUSE:SLFO:1.2"
 package = "python-msgpack"
 [origins.saltbundlepy-netaddr]
-project = "SUSE:SLE-15-SP4:Update"
+# Most probably was accidentally excluded from the bundle, but could be helpful
+# to have to make netaddress salt module working
+project = "SUSE:SLFO:1.2"
 package = "python-netaddr"
 [origins.saltbundlepy-packaging]
-project = "SUSE:SLE-15-SP4:Update"
+# Seems like salt and hatchling are using it.
+project = "SUSE:SLFO:1.2"
 package = "python-packaging"
 [origins.saltbundlepy-paramiko]
+# Used by docker and pyzmq modules, but in case of Salt Bundle not really required.
+# In pyzmq is used for ssh tunnel, which is not used in Salt context.
+# In docker is used to handle ssh:// connections to docker host,
+# in the Salt context we are managing local docker instances only.
+# Better to remove it as it's not included in the bundle anyway.
 project = "SUSE:SLE-15-SP4:Update"
 package = "python-paramiko"
 [origins.saltbundlepy-passlib]
-project = "SUSE:SLE-15-SP6:GA"
+project = "SUSE:SLFO:1.2"
 package = "python-passlib"
 [origins.saltbundlepy-pathspec]
-project = "SUSE:SLE-15-SP4:Update"
+# Build dependency, not included to the resulting bundle package
+project = "SUSE:SLFO:1.2"
 package = "python-pathspec"
 [origins.saltbundlepy-pip]
-project = "SUSE:SLE-15-SP4:Update"
+project = "SUSE:SLFO:1.2"
 package = "python-pip"
 [origins.saltbundlepy-pluggy]
-project = "SUSE:SLE-15-SP4:Update"
+project = "SUSE:SLFO:1.2"
 package = "python-pluggy"
 [origins.saltbundlepy-ply]
 project = "SUSE:SLE-15-SP4:Update"
@@ -224,45 +247,52 @@ package = "python-ply"
 project = "SUSE:SLFO:1.2"
 package = "python-psutil"
 [origins.saltbundlepy-ptyprocess]
+# Looks like it's not used by any othe dependency and Salt Bundle
+# We can drop it.
 project = "SUSE:SLE-15-SP4:Update"
 package = "python-ptyprocess"
 [origins.saltbundlepy-py]
-project = "SUSE:SLE-15-SP4:Update"
+project = "SUSE:SLFO:1.2"
 package = "python-py"
 [origins.saltbundlepy-pyasn1]
-project = "SUSE:SLE-15-SP4:Update"
+# Can be removed as required only by paramiko which is not in the bundle already
+project = "openSUSE:Factory"
 package = "python-pyasn1"
 [origins.saltbundlepy-pyasn1-modules]
-project = "SUSE:SLE-15-SP4:Update"
+# Can be removed as required only by paramiko which is not in the bundle already
+project = "openSUSE:Factory"
 package = "python-pyasn1-modules"
 [origins.saltbundlepy-pycparser]
-project = "SUSE:SLE-15-SP4:Update"
+project = "SUSE:SLFO:1.2"
 package = "python-pycparser"
 [origins.saltbundlepy-pycurl]
-project = "SUSE:SLE-15-SP4:Update"
+project = "SUSE:SLFO:1.2"
 package = "python-pycurl"
 [origins.saltbundlepy-pyinotify]
-project = "SUSE:SLE-15-SP4:Update"
+project = "SUSE:SLFO:1.2"
 package = "python-pyinotify"
 [origins.saltbundlepy-pynacl]
-project = "SUSE:SLE-15-SP4:Update"
+project = "SUSE:SLFO:1.2"
 package = "python-PyNaCl"
 [origins.saltbundlepy-pyopenssl]
+# We should be very careful with it as openssl is different on the clients
 project = "SUSE:SLE-15-SP4:Update"
 package = "python-pyOpenSSL"
 [origins.saltbundlepy-pyparsing]
+# Looks unused, most probably can be dropped
 project = "SUSE:SLE-15-SP4:Update"
 package = "python-pyparsing"
 [origins.saltbundlepy-pysocks]
-project = "SUSE:SLE-15-SP4:Update"
+project = "SUSE:SLFO:1.2"
 package = "python-PySocks"
 [origins.saltbundlepy-pytest]
 project = "SUSE:SLE-15-SP4:Update"
 package = "python-pytest"
 [origins.saltbundlepy-pytz]
-project = "SUSE:SLE-15-SP4:Update"
+project = "SUSE:SLFO:1.2"
 package = "python-pytz"
 [origins.saltbundlepy-pyxattr]
+# Can be dropped as kiwi module which requires it was dropped from the bundle
 project = "openSUSE:Factory"
 package = "python-pyxattr"
 [origins.saltbundlepy-pyyaml]
@@ -272,9 +302,11 @@ package = "python-PyYAML"
 project = "SUSE:SLFO:1.2"
 package = "python-pyzmq"
 [origins.saltbundlepy-requests]
-project = "SUSE:SLE-15-SP4:Update"
+project = "openSUSE:Factory"
 package = "python-requests"
 [origins.saltbundlepy-rpm-macros]
+# Makes sense to update it only on having issues on macro expansion
+# while building the bundle
 project = "SUSE:SLE-15-SP4:Update"
 package = "python-rpm-macros"
 [origins.saltbundlepy-setuptools]
@@ -284,35 +316,44 @@ package = "python-setuptools"
 project = "SUSE:SLFO:1.2"
 package = "python-setuptools_scm"
 [origins.saltbundlepy-simplejson]
-project = "SUSE:SLE-15-SP4:Update"
+# Can be dropped, was used by pyzmq and jmespath most probably for Python 2
+project = "SUSE:SLFO:1.2"
 package = "python-simplejson"
 [origins.saltbundlepy-six]
 project = "SUSE:SLFO:1.2"
 package = "python-six"
 [origins.saltbundlepy-tomli]
-project = "SUSE:SLE-15-SP4:Update"
+project = "SUSE:SLFO:1.2"
 package = "python-tomli"
 [origins.saltbundlepy-tornado]
 project = "SUSE:SLE-15-SP4:Update"
 package = "python-tornado"
 [origins.saltbundlepy-typing-extensions]
+# Seems like could be deleted, specified as used by setuptools-scm,
+# but setuptools is shipped with vendored version of this library
+# and pip also has vendored version of it
 project = "SUSE:SLE-15-SP6:GA"
 package = "python-typing_extensions"
 [origins.saltbundlepy-urllib3]
-project = "SUSE:SLE-15-SP4:Update"
+project = "SUSE:SLFO:1.2"
 package = "python-urllib3"
 [origins.saltbundlepy-wcwidth]
+# Seems unused already, could be deleted
 project = "SUSE:SLE-15-SP5:Update"
 package = "python-wcwidth"
 [origins.saltbundlepy-websocket-client]
-project = "SUSE:SLE-15-SP4:Update"
+# Used only by docker module, but seems like salt docker module is not using any websocket calls
+# and import of websocket module is optional there.
+project = "openSUSE:Factory"
 package = "python-websocket-client"
 [origins.saltbundlepy-wheel]
 project = "SUSE:SLFO:1.2"
 package = "python-wheel"
 [origins.saltbundlepy-zipp]
+# Is used by importlib-metadata, which most probably could be dropped
+# as it's mostly used by setuptools and it has it's own vendored version inside
 project = "SUSE:SLE-15-SP4:Update"
 package = "python-zipp"
 [origins.saltbundlepy-zypp-plugin]
-project = "SUSE:SLE-15-SP4:Update"
+project = "SUSE:SLFO:1.2"
 package = "zypp-plugin"

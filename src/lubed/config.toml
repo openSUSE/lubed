@@ -87,7 +87,7 @@ package = "python-chardet"
 [origins.saltbundlepy-cryptography]
 # Newer version was rewritten with Rust, we can't update
 project = "SUSE:SLE-15-SP4:Update"
-package = "python-cryptography"
+package = "python3-cryptography"
 [origins.saltbundlepy-cryptography-vectors]
 # Related to cryptography, but not have been rewritten with Rust
 project = "SUSE:SLE-15-SP4:Update"
